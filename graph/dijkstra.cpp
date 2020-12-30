@@ -1,4 +1,4 @@
-//call dijkstra to find single source(s) shortest path in positive edge directed or undirected graph
+//call dijkstra to find single source(s) shortest path in positive edge directed or undirected graph(multi-edge and self loop also supported)
 //0-based index
 //if only one destination(t), after pop up destination(t) from pq you can return.
 //O(E logV)
@@ -11,29 +11,31 @@ struct graph {
   vector<vector<int>> g;
   vector<vector<ll>> cost;
   vector<ll> dis;
+  vector<int> vis;
  
-  graph(int n):n(n),g(n),cost(n){}
+  graph(int n):n(n),g(n),cost(n), vis(n){}
  
   void add_edge(int u, int v, ll c){
     g[u].push_back(v);
     cost[u].push_back(c);
   }
  
-  void dijkstra(int s, int t=-1){
+  void dijkstra(int s){
+    vis.assign(n, 0);
     dis.assign(n, 1e18);
     dis[s]=0;
-    auto comp = [&](int i, int j){return dis[i]==dis[j]? i<j: dis[i]>dis[j]; };
-    priority_queue <ll, vector<ll>, decltype(comp)> pq(comp);
-    pq.push(s);
+    priority_queue<pair<ll, int>> pq;
+    pq.push({0, 0});
     while (!pq.empty()){
-      int u = pq.top(); pq.pop();
-      if(u == t) return;
-      for(int i=0; i<g[u].size(); i++){
-        int v=g[u][i];
-        if(dis[u] + cost[u][i] < dis[v]){
-          pq.push(v);
-          dis[v] = dis[u] + cost[u][i];
-        }
+      int v = pq.top().second;
+      ll c = pq.top().first;
+      pq.pop();
+      if(vis[v])  continue;
+      vis[v]=1;
+      for(int i=0; i<g[v].size(); i++){
+        int u=g[v][i];
+        pq.push({c-cost[v][i], u});
+        dis[u] = min(dis[u], -c+cost[v][i]);
       }
     }
   }
