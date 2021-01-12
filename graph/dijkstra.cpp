@@ -25,17 +25,19 @@ struct graph {
     dis.assign(n, 1e18);
     dis[s]=0;
     priority_queue<pair<ll, int>> pq;
-    pq.push({0, 0});
+    pq.push({0, s});
+   
     while (!pq.empty()){
-      int v = pq.top().second;
-      ll c = pq.top().first;
+      int u = pq.top().second;
+      ll c = -pq.top().first;
       pq.pop();
-      if(vis[v])  continue;
-      vis[v]=1;
-      for(int i=0; i<g[v].size(); i++){
-        int u=g[v][i];
-        pq.push({c-cost[v][i], u});
-        dis[u] = min(dis[u], -c+cost[v][i]);
+      if(vis[u])  continue;
+      vis[u]=1;
+      for(int i=0; i<g[u].size(); i++){
+        int v=g[u][i];
+        dis[v] = min(dis[v], c+cost[u][i]);
+        pq.push({-(c+cost[u][i]), v});
+        
       }
     }
   }
