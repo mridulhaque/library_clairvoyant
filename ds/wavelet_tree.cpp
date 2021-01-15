@@ -83,8 +83,10 @@ struct WT {
  
   //count elements<=k in [l-r]
   int lte(int k, int l, int r){
-    if(!maf.count(k)) return 0;
-    k=maf[k];
+    auto it = st.upper_bound(k);
+    if(it==st.begin())  return 0;
+    it--;
+    k = maf[*it];
     r++;
     int v=1, lo=0, hi=sigma-1, ret=0;
     while(lo<hi){
